@@ -7,7 +7,6 @@ appdirs
 asgiref
 attrs
 billiard
-celery
 certifi
 cffi
 charset-normalizer

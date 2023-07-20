@@ -1,7 +1,9 @@
+import os
+import threading
+
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
-from codal.tasks import run_thread, codal_scraper, company_profile_updater
-from codal_scraper.celery import app
+from codal.tasks import codal_scraper, company_profile_updater, CodalScraperThread, CompanyProfileUpdaterThread
 from custom_logs.models import custom_log
 
 
@@ -9,38 +11,46 @@ from custom_logs.models import custom_log
 def robot(request, ck):
     if request.method == 'GET':
         if request.user.is_authenticated and request.user.is_superuser:
-            i = app.control.inspect()
-            number_of_active_task = 0
-            celery_active_task_ids = []
+            print('number_of_active_thread: ' + str(threading.active_count()))
+            print('main_thread: ' + str(threading.main_thread()))
+            print('current_thread: ' + str(threading.current_thread()))
+            print('current_thread id: ' + str(threading.get_ident()))
+            print('current_thread native id: ' + str(threading.get_native_id()))
+            print('list of all active thread: ' + str(threading.enumerate()))
+            for thr in threading.enumerate():
+                print(thr.name)
             custom_log('-------------- Thread supervisor starts----------------')
-            for worker in i.active():
-                custom_log(worker)
-                all_active_task_list = i.active()[worker]
-                number_of_active_task = len(all_active_task_list)
-                for celery_task in all_active_task_list:
-                    celery_task_id = celery_task['id']
-                    celery_active_task_ids.append(celery_task_id)
-                    celery_task_name = celery_task['name']
-                    custom_log('celery task id: ' + celery_task_id)
-                    custom_log('celery task name: ' + celery_task_name)
-                    custom_log('***')
-            custom_log('number of active task: ' + str(number_of_active_task))
+            is_robot_run = False
+            custom_log(str(threading.enumerate()))
+            for thr in threading.enumerate():
+                custom_log(thr.name)
+                if thr.name == 'codal_scraper':
+                    is_robot_run = True
+                    break
+            if is_robot_run:
+                custom_log('codal scraper is active')
+            else:
+                custom_log('codal scraper is not active')
             custom_log('-------------- Thread supervisor ends ----------------')
             if ck == "start":
-                if number_of_active_task == 0:
-                    codal_scraper.delay()
-                    company_profile_updater.delay()
-                    return JsonResponse({'message': 'robot has started'})
+                if not is_robot_run:
+                    try:
+                        os.rename('codal\\tasks_stopped.py', 'codal\\tasks.py')
+                    except Exception as e:
+                        print(str(e))
+                    CodalScraperThread(name='codal_scraper').start()
+                    return JsonResponse({'message': 'the codal scraper has been started'})
                 else:
-                    return JsonResponse({'message': 'robot had worked before it has started'})
+                    return JsonResponse({'message': 'the codal scraper is working'})
             elif ck == "stop":
-                if number_of_active_task == 0:
-                    return JsonResponse({'message': 'robot has not worked'})
+                if not is_robot_run:
+                    return JsonResponse({'message': 'the codal scraper is not working'})
                 else:
-                    app.control.purge()
-                    app.control.terminate(celery_active_task_ids)
-                    app.control.broadcast('pool_restart')
-                    return JsonResponse({'message': 'robot has stopped'})
+                    for thr in threading.enumerate():
+                        if thr.name == 'codal_scraper':
+                            thr.raise_exception()
+                            thr.join()
+                    return JsonResponse({'message': 'the codal scraper has been stopped'})
             else:
                 pass
         return HttpResponse("you are not authorized")

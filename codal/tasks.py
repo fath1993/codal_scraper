@@ -1,4 +1,6 @@
-﻿import jdatetime
+﻿import threading
+import ctypes
+import jdatetime
 import time
 
 from custom_logs.models import custom_log
@@ -59,7 +61,8 @@ def codal_scraper():
                             try:
                                 custom_log("check and update data with first page", 'p')
                                 get_codal_data(codal_first_page())
-                                custom_log(str(get_time_sleep()) + "second delay after updating data with first page", 'p')
+                                custom_log(str(get_time_sleep()) + "second delay after updating data with first page",
+                                           'p')
                                 time.sleep(get_time_sleep())
                                 break
                             except Company.DoesNotExist as e:
@@ -183,8 +186,9 @@ def codal_scraper():
                         get_monthly_report_number(item)
                         cc = Company.objects.get(monthly_report=item)
                         cc.save()
-                        custom_log("getting " + str(item) + " monthly report has finished. we are waiting for " + str(get_time_sleep()) + " seconds",
-                               'p')
+                        custom_log("getting " + str(item) + " monthly report has finished. we are waiting for " + str(
+                            get_time_sleep()) + " seconds",
+                                   'p')
                         time.sleep(get_time_sleep())
                         break
                     except Company.DoesNotExist as e:
@@ -228,8 +232,9 @@ def codal_scraper():
                         get_seasonal_report_number(item)
                         cc = Company.objects.get(seasonal_report=item)
                         cc.save()
-                        custom_log("getting " + str(item) + " seasonal report has finished. we are waiting for " + str(get_time_sleep()) + " seconds",
-                               'p')
+                        custom_log("getting " + str(item) + " seasonal report has finished. we are waiting for " + str(
+                            get_time_sleep()) + " seconds",
+                                   'p')
                         time.sleep(get_time_sleep())
                         break
                     except Company.DoesNotExist as e:
@@ -299,7 +304,8 @@ def codal_scraper():
                     get_monthly_report_number(item)
                     cc = Company.objects.get(monthly_report=item)
                     cc.save()
-                    custom_log("getting " + str(item) + " monthly report has finished. we are waiting for " + str(get_time_sleep()) + " seconds", 'p')
+                    custom_log("getting " + str(item) + " monthly report has finished. we are waiting for " + str(
+                        get_time_sleep()) + " seconds", 'p')
                     time.sleep(get_time_sleep())
                     break
                 except Company.DoesNotExist as e:
@@ -343,7 +349,8 @@ def codal_scraper():
                     get_seasonal_report_number(item)
                     cc = Company.objects.get(seasonal_report=item)
                     cc.save()
-                    custom_log("getting " + str(item) + " seasonal report has finished. we are waiting for " + str(get_time_sleep()) + " seconds", 'p')
+                    custom_log("getting " + str(item) + " seasonal report has finished. we are waiting for " + str(
+                        get_time_sleep()) + " seconds", 'p')
                     time.sleep(get_time_sleep())
                     break
                 except Company.DoesNotExist as e:
@@ -386,7 +393,6 @@ def company_profile_updater():
     while True:
         company_profiles = CompanyProfile.objects.filter()
         for company_profile in company_profiles:
-            company_profile_updater(company_profile)
             try:
                 custom_log("company_profile_updater> start", 'd')
                 monthly_report_calculator(company_profile)
@@ -399,4 +405,21 @@ def company_profile_updater():
         time.sleep(3600)
 
 
+class CodalScraperThread(threading.Thread):
+    def run(self):
+        codal_scraper()
 
+    def get_id(self):
+        return self.native_id
+
+    def raise_exception(self):
+        thread_id = self.get_id()
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, ctypes.py_object(SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+            print('Exception raise failure')
+
+
+class CompanyProfileUpdaterThread(threading.Thread):
+    def run(self):
+        company_profile_updater()

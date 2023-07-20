@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rangefilter',
     'django_jalali',
+    'django_crontab',
     'custom_logs',
     'codal',
     'website',
@@ -93,15 +94,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CELERY SETTINGS
-CELERY_BACKEND = 'redis://localhost:6379/3'
-CELERY_BROKER_URL = 'redis://localhost:6379/4'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/5'
-
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_ENABLE_UTC = True
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-
 CHROME_DRIVER_PATH = BASE_DIR / 'chrome_driver/chromedriver114.0.5735.90.exe'
+
+CRONJOBS = [
+    ('0 */12 * * *', 'codal.tasks.company_profile_updater'),
+]

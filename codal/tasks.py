@@ -1,5 +1,4 @@
 ﻿import jdatetime
-from celery import shared_task
 import time
 
 from custom_logs.models import custom_log
@@ -7,10 +6,9 @@ from proxies.models import get_proxy, check_proxy_availability
 from codal.cbot import get_codal_data, codal_first_page, get_time_sleep, check_if_last_page, codal_monthly_report_page, \
     codal_seasonal_report_page, monthly_report_calculator, seasonal_report_calculator, \
     seasonal_report_operating_ratio_calculator, get_monthly_report_number, get_seasonal_report_number
-from codal.models import Company, CompanyLink, MonthlyReport, SeasonalReport
+from codal.models import Company, CompanyLink, MonthlyReport, SeasonalReport, CompanyProfile
 
 
-@shared_task
 def run_thread():
     custom_log('thread starts')
     custom_log('now we are waiting for 90 seconds')
@@ -19,7 +17,6 @@ def run_thread():
     return True
 
 
-@shared_task
 def codal_scraper():
     while True:
         # from first page
@@ -35,7 +32,7 @@ def codal_scraper():
                 custom_log("problem has happened during the event : " + str(e), 'p')
                 while True:
                     custom_log("checking proxy...", 'p')
-                    if check_proxy_availability(get_proxy())[0]:
+                    if check_proxy_availability(get_proxy()):
                         break
                     else:
                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -72,7 +69,7 @@ def codal_scraper():
                                 custom_log("problem has happened during the event : " + str(e), 'p')
                                 while True:
                                     custom_log("checking proxy...", 'p')
-                                    if check_proxy_availability(get_proxy())[0]:
+                                    if check_proxy_availability(get_proxy()):
                                         break
                                     else:
                                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -92,7 +89,7 @@ def codal_scraper():
                                 custom_log("problem has happened during the event : " + str(e), 'p')
                                 while True:
                                     custom_log("checking proxy...", 'p')
-                                    if check_proxy_availability(get_proxy())[0]:
+                                    if check_proxy_availability(get_proxy()):
                                         break
                                     else:
                                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -107,7 +104,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -136,7 +133,7 @@ def codal_scraper():
                                 custom_log("problem has happened during the event : " + str(e), 'p')
                                 while True:
                                     custom_log("checking proxy...", 'p')
-                                    if check_proxy_availability(get_proxy())[0]:
+                                    if check_proxy_availability(get_proxy()):
                                         break
                                     else:
                                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -156,7 +153,7 @@ def codal_scraper():
                                 custom_log("problem has happened during the event : " + str(e), 'p')
                                 while True:
                                     custom_log("checking proxy...", 'p')
-                                    if check_proxy_availability(get_proxy())[0]:
+                                    if check_proxy_availability(get_proxy()):
                                         break
                                     else:
                                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -171,7 +168,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -197,7 +194,7 @@ def codal_scraper():
                         custom_log("problem has happened during the event : " + str(e), 'p')
                         while True:
                             custom_log("checking proxy...", 'p')
-                            if check_proxy_availability(get_proxy())[0]:
+                            if check_proxy_availability(get_proxy()):
                                 break
                             else:
                                 custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -217,7 +214,7 @@ def codal_scraper():
                         custom_log("problem has happened during the event : " + str(e), 'p')
                         while True:
                             custom_log("checking proxy...", 'p')
-                            if check_proxy_availability(get_proxy())[0]:
+                            if check_proxy_availability(get_proxy()):
                                 break
                             else:
                                 custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -242,7 +239,7 @@ def codal_scraper():
                         custom_log("problem has happened during the event : " + str(e), 'p')
                         while True:
                             custom_log("checking proxy...", 'p')
-                            if check_proxy_availability(get_proxy())[0]:
+                            if check_proxy_availability(get_proxy()):
                                 break
                             else:
                                 custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -262,7 +259,7 @@ def codal_scraper():
                         custom_log("problem has happened during the event : " + str(e), 'p')
                         while True:
                             custom_log("checking proxy...", 'p')
-                            if check_proxy_availability(get_proxy())[0]:
+                            if check_proxy_availability(get_proxy()):
                                 break
                             else:
                                 custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -288,7 +285,7 @@ def codal_scraper():
                 custom_log("problem has happened during the event : " + str(e), 'p')
                 while True:
                     custom_log("checking proxy...", 'p')
-                    if check_proxy_availability(get_proxy())[0]:
+                    if check_proxy_availability(get_proxy()):
                         break
                     else:
                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -312,7 +309,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -332,7 +329,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -356,7 +353,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -376,7 +373,7 @@ def codal_scraper():
                     custom_log("problem has happened during the event : " + str(e), 'p')
                     while True:
                         custom_log("checking proxy...", 'p')
-                        if check_proxy_availability(get_proxy())[0]:
+                        if check_proxy_availability(get_proxy()):
                             break
                         else:
                             custom_log("proxies are not connectable. pls upgrade theme", 'p')
@@ -385,18 +382,20 @@ def codal_scraper():
         custom_log("the robot has finished task 2", 'p')
 
 
-@shared_task
-def company_profile_updater(company_profile_object):
+def company_profile_updater():
     while True:
-        try:
-            custom_log("company_profile_updater> start", 'd')
-            monthly_report_calculator(company_profile_object)
-            seasonal_report_calculator(company_profile_object)
-            seasonal_report_operating_ratio_calculator(company_profile_object)
-        except Exception as e:
-            custom_log("company_profile_updater>try/except err: " + str(e), 'd')
-        custom_log("company_profile_updater> finish", 'd')
-        custom_log("company_profile_updater> waiting for 1 hour", 'd')
+        company_profiles = CompanyProfile.objects.filter()
+        for company_profile in company_profiles:
+            company_profile_updater(company_profile)
+            try:
+                custom_log("company_profile_updater> start", 'd')
+                monthly_report_calculator(company_profile)
+                seasonal_report_calculator(company_profile)
+                seasonal_report_operating_ratio_calculator(company_profile)
+            except Exception as e:
+                custom_log("company_profile_updater>try/except err: " + str(e), 'd')
+            custom_log("company_profile_updater> finish", 'd')
+            custom_log("company_profile_updater> waiting for 1 hour", 'd')
         time.sleep(3600)
 
 

@@ -31,8 +31,11 @@ class Proxy(models.Model):
 
 
 def get_proxy():
-    proxy = Proxy.objects.filter().latest('id')
-    return str(proxy.proxy_ip), str(proxy.proxy_port)
+    try:
+        proxy = Proxy.objects.filter().latest('id')
+        return str(proxy.proxy_ip), str(proxy.proxy_port)
+    except:
+        return 'proxies not defined'
 
 
 headers = {
@@ -45,7 +48,7 @@ def check_proxy_availability(proxy: tuple):
     if not settings.is_proxy_on:
         res = 'proxy is off'
         return True, res
-    custom_log("checking proxy " + str(proxy) + "...", 'd')
+    custom_log("checking proxy " + str(proxy[0] + ':' + proxy[1]) + " ...", 'd')
     url = "https://www.codal.ir"
     try:
         custom_log("waiting 2 second", 'd')

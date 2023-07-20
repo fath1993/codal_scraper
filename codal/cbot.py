@@ -1,10 +1,11 @@
 import jdatetime
 import time
+
+from codal_scraper.settings import CHROME_DRIVER_PATH
 from custom_logs.models import custom_log
 from proxies.models import get_proxy, check_proxy_availability
 from codal.models import Company, MonthlyReport, SeasonalReport, ConfigSetting
 from codal.utils import date_extractor, year_extractor, word_simplifier, codal_title_cleanup, date_range_generator
-
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -12,11 +13,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
-# 3.142.7
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver import FirefoxOptions, FirefoxProfile
-from webdriver_manager.firefox import GeckoDriverManager
+d = DesiredCapabilities.CHROME
+d['goog:loggingPrefs'] = {'performance': 'ALL'}
+
+PROXY = str(get_proxy()[0] + ':' + get_proxy()[1])
 
 
 # ------------ Start Scraper functions -------------------
@@ -31,19 +34,16 @@ def get_time_sleep():
 
 
 def get_codal_data(url):
-    options = FirefoxOptions()
-    options.add_argument("-headless")
-    options.add_argument("--width=1920")
-    options.add_argument("--height=1080")
-    settings = ConfigSetting.objects.filter().latest('id')
-    firefox_profile = webdriver.FirefoxProfile()
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    settings = ConfigSetting.objects.all().latest('id')
     if settings.is_proxy_on:
-        firefox_profile.set_preference("network.proxy.type", 1)
-        firefox_profile.set_preference("network.proxy.http", get_proxy()[0])
-        firefox_profile.set_preference("network.proxy.http_port", get_proxy()[1])
-        firefox_profile.update_preferences()
-        options.profile = firefox_profile
-    driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+        global PROXY
+        options.add_argument('--proxy-server=%s' % PROXY)
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
     webdriver_problem_number_of_reloading = 0
     while True:
         try:
@@ -53,6 +53,7 @@ def get_codal_data(url):
                 driver.get(url)
                 custom_log("driver.get(url)> url has been fetched. we are waiting for: " + str(get_time_sleep()), 'd')
                 time.sleep(get_time_sleep())
+                check_chrome_connection_status(driver)
                 custom_log("get_codal_data: spinner start", "d")
                 try:
                     WebDriverWait(driver, 30).until(EC.invisibility_of_element_located((By.CLASS_NAME, "spinner")))
@@ -77,146 +78,58 @@ def get_codal_data(url):
                                             "/html/body/form/div[3]/div[1]/div[1]/div[2]/div[2]/table/tbody")
                 tr = tbody.find_elements(By.TAG_NAME, "tr")
                 for i in tr:
-                    custom_log("______________________ start ____________________________", "d")
-                    td = i.find_elements(By.CLASS_NAME, "table__content")
-
-                    # td[0]>>>>>badge#
-                    badge = td[0].text.strip()
-                    badge_link = td[0].find_element(By.TAG_NAME, "a").get_attribute('href')
-
-                    # td[1]>>>>>name#
-                    name = td[1].text.strip()
-
-                    # td[3]>>>>>description#
-                    description = td[3].text.strip()
-                    description_detail = codal_title_cleanup(description)
-                    print('description_detail: ' + str(description_detail))
-                    report_status = []
-                    for status in description_detail[1]:
-                        if description_detail[1][status]:
-                            report_status.append(status)
-                    report_status = ' - '.join(report_status)
-                    print(report_status)
-                    comparative_title = word_simplifier(description_detail[0], 'without_space')
-                    extracted_date = date_extractor(description)
-                    generated_title = word_simplifier(description_detail[0], 'with_space') + str(extracted_date)
-                    description_link = td[3].find_element(By.TAG_NAME, "a").get_attribute('href')
-                    custom_log("badge: " + badge, "d")
-                    custom_log("badge link: " + badge_link, "d")
-                    custom_log("name: " + name, "d")
-                    custom_log("description: " + description, "d")
-                    custom_log("description link: " + description_link, "d")
-
-                    # td[5]>>>>>date of publish
-                    report_has_sent_at = str(td[5].text.strip()).replace('/', ' ').replace(':', ' ').split()
-                    report_has_sent_at = jdatetime.datetime(year=int(report_has_sent_at[0]),
-                                                            month=int(report_has_sent_at[1]),
-                                                            day=int(report_has_sent_at[2]),
-                                                            hour=int(report_has_sent_at[3]),
-                                                            minute=int(report_has_sent_at[4]),
-                                                            second=int(report_has_sent_at[5]))
                     try:
-                        ye = year_extractor(description)
-                        custom_log("the year is: " + ye, "d")
+                        custom_log("______________________ start ____________________________", "d")
+                        td = i.find_elements(By.CLASS_NAME, "table__content")
+
+                        # td[0]>>>>>badge#
+                        badge = td[0].text.strip()
+                        badge_link = td[0].find_element(By.TAG_NAME, "a").get_attribute('href')
+
+                        # td[1]>>>>>name#
+                        name = td[1].text.strip()
+
+                        # td[3]>>>>>description#
+                        description = td[3].text.strip()
+                        description_detail = codal_title_cleanup(description)
+                        custom_log('description_detail: ' + str(description_detail))
+                        report_status = []
+                        for status in description_detail[1]:
+                            if description_detail[1][status]:
+                                report_status.append(status)
+                        report_status = ' - '.join(report_status)
+                        custom_log(report_status)
+                        comparative_title = word_simplifier(description_detail[0], 'without_space')
+                        extracted_date = date_extractor(description)
+                        generated_title = word_simplifier(description_detail[0], 'with_space') + str(extracted_date)
+                        description_link = td[3].find_element(By.TAG_NAME, "a").get_attribute('href')
+                        custom_log("badge: " + badge, "d")
+                        custom_log("badge link: " + badge_link, "d")
+                        custom_log("name: " + name, "d")
+                        custom_log("description: " + description, "d")
+                        custom_log("description link: " + description_link, "d")
+
+                        # td[5]>>>>>date of publish
+                        report_has_sent_at = str(td[5].text.strip()).replace('/', ' ').replace(':', ' ').split()
+                        report_has_sent_at = jdatetime.datetime(year=int(report_has_sent_at[0]),
+                                                                month=int(report_has_sent_at[1]),
+                                                                day=int(report_has_sent_at[2]),
+                                                                hour=int(report_has_sent_at[3]),
+                                                                minute=int(report_has_sent_at[4]),
+                                                                second=int(report_has_sent_at[5]))
                         try:
-                            if int(ye) >= 1400:
-                                try:
-                                    old_company = Company.objects.get(badge=badge)
-                                    old_company.save()
-                                    custom_log("this company exist" + " : " + badge, "d")
-                                    if comparative_title.find("گزارشفعالیتماهانهدوره۱ماههمنتهیبه") != -1:
-                                        try:
-                                            old_report = MonthlyReport.objects.get(report_title=generated_title,
-                                                                                   company=old_company)
-                                            try:
-                                                if old_report.report_has_sent_at < report_has_sent_at:
-                                                    old_report.report_link = description_link
-                                                    old_report.report_has_sent_at = report_has_sent_at
-                                                    old_report.report_status = report_status
-                                                    old_report.month_reported_date = extracted_date
-                                                    old_report.save()
-                                                    custom_log(
-                                                        "this monthly report exist" + " : " + old_company.name + " - " + old_report.report_title + " and updated",
-                                                        "d")
-                                                else:
-                                                    custom_log(
-                                                        "ignore similar report" + old_company.name + " - " + old_report.report_title,
-                                                        "d")
-                                            except Exception as e:
-                                                custom_log("try->except: old report data\n" + str(e), "d")
-                                        except Exception as e:
-                                            custom_log("try->except: old report\n" + str(e), "d")
-                                            try:
-                                                new_report = MonthlyReport(
-                                                    company=old_company,
-                                                    report_title=generated_title,
-                                                    report_link=description_link,
-                                                    month_reported_date=extracted_date,
-                                                    report_has_sent_at=report_has_sent_at,
-                                                    report_status=report_status,
-                                                )
-                                                new_report.save()
-                                                custom_log(
-                                                    "the new monthly report : " + badge + " - " + generated_title + " has been saved",
-                                                    "d")
-                                            except Exception as e:
-                                                custom_log("try->except: new report\n" + str(e), "d")
-                                    elif comparative_title.find("اطلاعاتوصورت‌هایمالیمیاندوره‌ای") != -1 \
-                                            or comparative_title.find("صورت‌هایمالیسالمالیمنتهیبه") != -1 \
-                                            or comparative_title.find(
-                                        "صورت‌هایمالیتلفیقیسالمالیمنتهیبه") != -1:
-                                        try:
-                                            old_report = SeasonalReport.objects.get(report_title=generated_title,
-                                                                                    company=old_company)
-                                            try:
-                                                if old_report.report_has_sent_at < report_has_sent_at:
-                                                    old_report.report_link = description_link
-                                                    old_report.report_has_sent_at = report_has_sent_at
-                                                    old_report.report_status = report_status
-                                                    old_report.season_reported_date = extracted_date
-                                                    old_report.save()
-                                                    custom_log(
-                                                        "this seasonal report exist" + " : " + old_company.name + " - " + old_report.report_title + " and updated",
-                                                        "d")
-                                                else:
-                                                    custom_log(
-                                                        "ignore similar report" + old_company.name + " - " + old_report.report_title,
-                                                        "d")
-                                            except Exception as e:
-                                                custom_log("try->except: old report data\n" + str(e), "d")
-                                        except Exception as e:
-                                            custom_log("try->except: old report\n" + str(e), "d")
-                                            try:
-                                                new_report = SeasonalReport(
-                                                    company=old_company,
-                                                    report_title=generated_title,
-                                                    report_link=description_link,
-                                                    season_reported_date=extracted_date,
-                                                    report_has_sent_at=report_has_sent_at,
-                                                    report_status=report_status,
-                                                )
-                                                new_report.save()
-                                                custom_log(
-                                                    "the new seasonal report : " + badge + " - " + generated_title + " has been saved",
-                                                    "d")
-                                            except Exception as e:
-                                                custom_log("try->except: new report" + str(e), "d")
-                                    else:
-                                        custom_log("گزارش این بخش با فرمت های تعریف شده سازگار نیست", 'd')
-                                except Exception as e:
-                                    custom_log("try->except: old company\n" + str(e), "d")
+                            ye = year_extractor(description)
+                            custom_log("the year is: " + ye, "d")
+                            try:
+                                if int(ye) >= 1400:
                                     try:
-                                        new_company = Company(
-                                            badge=badge,
-                                            link=badge_link,
-                                            name=name,
-                                        )
-                                        new_company.save()
-                                        custom_log("the new company : " + badge + " has saved", "d")
+                                        old_company = Company.objects.get(badge=badge)
+                                        old_company.save()
+                                        custom_log("this company exist" + " : " + badge, "d")
                                         if comparative_title.find("گزارشفعالیتماهانهدوره۱ماههمنتهیبه") != -1:
                                             try:
                                                 old_report = MonthlyReport.objects.get(report_title=generated_title,
-                                                                                       company=new_company)
+                                                                                       company=old_company)
                                                 try:
                                                     if old_report.report_has_sent_at < report_has_sent_at:
                                                         old_report.report_link = description_link
@@ -225,19 +138,19 @@ def get_codal_data(url):
                                                         old_report.month_reported_date = extracted_date
                                                         old_report.save()
                                                         custom_log(
-                                                            "this monthly report exist" + " : " + new_company.name + " - " + old_report.report_title + " and updated",
+                                                            "this monthly report exist" + " : " + old_company.name + " - " + old_report.report_title + " and updated",
                                                             "d")
                                                     else:
                                                         custom_log(
-                                                            "ignore similar report" + new_company.name + " - " + old_report.report_title,
+                                                            "ignore similar report" + old_company.name + " - " + old_report.report_title,
                                                             "d")
                                                 except Exception as e:
-                                                    custom_log("try->except: old report data" + str(e), "d")
+                                                    custom_log("try->except: old report data\n" + str(e), "d")
                                             except Exception as e:
-                                                custom_log("try->except: old report" + str(e), "d")
+                                                custom_log("try->except: old report\n" + str(e), "d")
                                                 try:
                                                     new_report = MonthlyReport(
-                                                        company=new_company,
+                                                        company=old_company,
                                                         report_title=generated_title,
                                                         report_link=description_link,
                                                         month_reported_date=extracted_date,
@@ -246,17 +159,17 @@ def get_codal_data(url):
                                                     )
                                                     new_report.save()
                                                     custom_log(
-                                                        "the new monthly report : " + badge + " - " + generated_title + " has saved",
+                                                        "the new monthly report : " + badge + " - " + generated_title + " has been saved",
                                                         "d")
                                                 except Exception as e:
-                                                    custom_log("try->except: new report" + str(e), "d")
+                                                    custom_log("try->except: new report\n" + str(e), "d")
                                         elif comparative_title.find("اطلاعاتوصورت‌هایمالیمیاندوره‌ای") != -1 \
                                                 or comparative_title.find("صورت‌هایمالیسالمالیمنتهیبه") != -1 \
                                                 or comparative_title.find(
                                             "صورت‌هایمالیتلفیقیسالمالیمنتهیبه") != -1:
                                             try:
                                                 old_report = SeasonalReport.objects.get(report_title=generated_title,
-                                                                                        company=new_company)
+                                                                                        company=old_company)
                                                 try:
                                                     if old_report.report_has_sent_at < report_has_sent_at:
                                                         old_report.report_link = description_link
@@ -265,19 +178,19 @@ def get_codal_data(url):
                                                         old_report.season_reported_date = extracted_date
                                                         old_report.save()
                                                         custom_log(
-                                                            "this seasonal report exist" + " : " + new_company.name + " - " + old_report.report_title + " and updated",
+                                                            "this seasonal report exist" + " : " + old_company.name + " - " + old_report.report_title + " and updated",
                                                             "d")
                                                     else:
                                                         custom_log(
-                                                            "ignore similar report" + new_company.name + " - " + old_report.report_title,
+                                                            "ignore similar report" + old_company.name + " - " + old_report.report_title,
                                                             "d")
                                                 except Exception as e:
-                                                    custom_log("try->except: old report data" + str(e), "d")
+                                                    custom_log("try->except: old report data\n" + str(e), "d")
                                             except Exception as e:
-                                                custom_log("try->except: old report" + str(e), "d")
+                                                custom_log("try->except: old report\n" + str(e), "d")
                                                 try:
                                                     new_report = SeasonalReport(
-                                                        company=new_company,
+                                                        company=old_company,
                                                         report_title=generated_title,
                                                         report_link=description_link,
                                                         season_reported_date=extracted_date,
@@ -289,20 +202,111 @@ def get_codal_data(url):
                                                         "the new seasonal report : " + badge + " - " + generated_title + " has been saved",
                                                         "d")
                                                 except Exception as e:
-                                                    custom_log("try->except: new report " + str(e), "d")
+                                                    custom_log("try->except: new report" + str(e), "d")
                                         else:
                                             custom_log("گزارش این بخش با فرمت های تعریف شده سازگار نیست", 'd')
                                     except Exception as e:
-                                        custom_log("try->except: new company cant create \n" + str(e), "d")
-                            else:
-                                custom_log("this report is older than 1400", "d")
+                                        custom_log("try->except: old company\n" + str(e), "d")
+                                        try:
+                                            new_company = Company(
+                                                badge=badge,
+                                                link=badge_link,
+                                                name=name,
+                                            )
+                                            new_company.save()
+                                            custom_log("the new company : " + badge + " has saved", "d")
+                                            if comparative_title.find("گزارشفعالیتماهانهدوره۱ماههمنتهیبه") != -1:
+                                                try:
+                                                    old_report = MonthlyReport.objects.get(report_title=generated_title,
+                                                                                           company=new_company)
+                                                    try:
+                                                        if old_report.report_has_sent_at < report_has_sent_at:
+                                                            old_report.report_link = description_link
+                                                            old_report.report_has_sent_at = report_has_sent_at
+                                                            old_report.report_status = report_status
+                                                            old_report.month_reported_date = extracted_date
+                                                            old_report.save()
+                                                            custom_log(
+                                                                "this monthly report exist" + " : " + new_company.name + " - " + old_report.report_title + " and updated",
+                                                                "d")
+                                                        else:
+                                                            custom_log(
+                                                                "ignore similar report" + new_company.name + " - " + old_report.report_title,
+                                                                "d")
+                                                    except Exception as e:
+                                                        custom_log("try->except: old report data" + str(e), "d")
+                                                except Exception as e:
+                                                    custom_log("try->except: old report" + str(e), "d")
+                                                    try:
+                                                        new_report = MonthlyReport(
+                                                            company=new_company,
+                                                            report_title=generated_title,
+                                                            report_link=description_link,
+                                                            month_reported_date=extracted_date,
+                                                            report_has_sent_at=report_has_sent_at,
+                                                            report_status=report_status,
+                                                        )
+                                                        new_report.save()
+                                                        custom_log(
+                                                            "the new monthly report : " + badge + " - " + generated_title + " has saved",
+                                                            "d")
+                                                    except Exception as e:
+                                                        custom_log("try->except: new report" + str(e), "d")
+                                            elif comparative_title.find("اطلاعاتوصورت‌هایمالیمیاندوره‌ای") != -1 \
+                                                    or comparative_title.find("صورت‌هایمالیسالمالیمنتهیبه") != -1 \
+                                                    or comparative_title.find(
+                                                "صورت‌هایمالیتلفیقیسالمالیمنتهیبه") != -1:
+                                                try:
+                                                    old_report = SeasonalReport.objects.get(report_title=generated_title,
+                                                                                            company=new_company)
+                                                    try:
+                                                        if old_report.report_has_sent_at < report_has_sent_at:
+                                                            old_report.report_link = description_link
+                                                            old_report.report_has_sent_at = report_has_sent_at
+                                                            old_report.report_status = report_status
+                                                            old_report.season_reported_date = extracted_date
+                                                            old_report.save()
+                                                            custom_log(
+                                                                "this seasonal report exist" + " : " + new_company.name + " - " + old_report.report_title + " and updated",
+                                                                "d")
+                                                        else:
+                                                            custom_log(
+                                                                "ignore similar report" + new_company.name + " - " + old_report.report_title,
+                                                                "d")
+                                                    except Exception as e:
+                                                        custom_log("try->except: old report data" + str(e), "d")
+                                                except Exception as e:
+                                                    custom_log("try->except: old report" + str(e), "d")
+                                                    try:
+                                                        new_report = SeasonalReport(
+                                                            company=new_company,
+                                                            report_title=generated_title,
+                                                            report_link=description_link,
+                                                            season_reported_date=extracted_date,
+                                                            report_has_sent_at=report_has_sent_at,
+                                                            report_status=report_status,
+                                                        )
+                                                        new_report.save()
+                                                        custom_log(
+                                                            "the new seasonal report : " + badge + " - " + generated_title + " has been saved",
+                                                            "d")
+                                                    except Exception as e:
+                                                        custom_log("try->except: new report " + str(e), "d")
+                                            else:
+                                                custom_log("گزارش این بخش با فرمت های تعریف شده سازگار نیست", 'd')
+                                        except Exception as e:
+                                            custom_log("try->except: new company cant create \n" + str(e), "d")
+                                else:
+                                    custom_log("this report is older than 1400", "d")
+                            except Exception as e:
+                                custom_log("exception: " + str(e), 'd')
                         except Exception as e:
-                            custom_log("exception: " + str(e), 'd')
+                            custom_log(
+                                "report year extraction has been failed. title is: " + generated_title + ' err: ' + str(e),
+                                "d")
+                        custom_log("______________________ end ____________________________", "d")
                     except Exception as e:
-                        custom_log(
-                            "report year extraction has been failed. title is: " + generated_title + ' err: ' + str(e),
-                            "d")
-                    custom_log("______________________ end ____________________________", "d")
+                        custom_log("tbody for i in tr > try/except. err: " + str(e), "d")
             except Exception as e:
                 custom_log("try->except: get_codal_data tbody " + str(e), "d")
             break
@@ -330,19 +334,16 @@ def get_codal_data(url):
 
 
 def get_monthly_report_number(report_object):
-    options = FirefoxOptions()
-    options.add_argument("-headless")
-    options.add_argument("--width=1920")
-    options.add_argument("--height=1080")
-    settings = ConfigSetting.objects.filter().latest('id')
-    firefox_profile = webdriver.FirefoxProfile()
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    settings = ConfigSetting.objects.all().latest('id')
     if settings.is_proxy_on:
-        firefox_profile.set_preference("network.proxy.type", 1)
-        firefox_profile.set_preference("network.proxy.http", get_proxy()[0])
-        firefox_profile.set_preference("network.proxy.http_port", get_proxy()[1])
-        firefox_profile.update_preferences()
-        options.profile = firefox_profile
-    driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+        global PROXY
+        options.add_argument('--proxy-server=%s' % PROXY)
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
     webdriver_problem_number_of_reloading = 0
     while True:
         try:
@@ -353,6 +354,7 @@ def get_monthly_report_number(report_object):
                 driver.get(url)
                 custom_log("driver.get(url)> url has been fetched. we are waiting for: " + str(get_time_sleep()), 'd')
                 time.sleep(get_time_sleep())
+                check_chrome_connection_status(driver)
                 try:
                     WebDriverWait(driver, 30).until(EC.invisibility_of_element_located((By.CLASS_NAME, "spinner")))
                     WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "label")))
@@ -505,19 +507,16 @@ def get_monthly_report_number(report_object):
 
 
 def get_seasonal_report_number(report_object):
-    options = FirefoxOptions()
-    options.add_argument("-headless")
-    options.add_argument("--width=1920")
-    options.add_argument("--height=1080")
-    settings = ConfigSetting.objects.filter().latest('id')
-    firefox_profile = webdriver.FirefoxProfile()
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    settings = ConfigSetting.objects.all().latest('id')
     if settings.is_proxy_on:
-        firefox_profile.set_preference("network.proxy.type", 1)
-        firefox_profile.set_preference("network.proxy.http", get_proxy()[0])
-        firefox_profile.set_preference("network.proxy.http_port", get_proxy()[1])
-        firefox_profile.update_preferences()
-        options.profile = firefox_profile
-    driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+        global PROXY
+        options.add_argument('--proxy-server=%s' % PROXY)
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
     webdriver_problem_number_of_reloading = 0
     while True:
         try:
@@ -529,6 +528,7 @@ def get_seasonal_report_number(report_object):
                 driver.get(url)
                 custom_log("driver.get(url)> url has been fetched. we are waiting for: " + str(get_time_sleep()), 'd')
                 time.sleep(get_time_sleep())
+                check_chrome_connection_status(driver)
                 try:
                     WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "label")))
                     option_ = driver.find_elements(By.TAG_NAME, 'option')
@@ -746,19 +746,16 @@ def get_seasonal_report_number(report_object):
 
 
 def check_if_last_page(url):
-    options = FirefoxOptions()
-    options.add_argument("-headless")
-    options.add_argument("--width=1920")
-    options.add_argument("--height=1080")
-    settings = ConfigSetting.objects.filter().latest('id')
-    firefox_profile = webdriver.FirefoxProfile()
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    settings = ConfigSetting.objects.all().latest('id')
     if settings.is_proxy_on:
-        firefox_profile.set_preference("network.proxy.type", 1)
-        firefox_profile.set_preference("network.proxy.http", get_proxy()[0])
-        firefox_profile.set_preference("network.proxy.http_port", get_proxy()[1])
-        firefox_profile.update_preferences()
-        options.profile = firefox_profile
-    driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+        global PROXY
+        options.add_argument('--proxy-server=%s' % PROXY)
+    driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
     webdriver_problem_number_of_reloading = 0
     while True:
         try:
@@ -768,6 +765,7 @@ def check_if_last_page(url):
                 driver.get(url)
                 custom_log("driver.get(url)> url has been fetched. we are waiting for: " + str(get_time_sleep()), 'd')
                 time.sleep(get_time_sleep())
+                check_chrome_connection_status(driver)
                 custom_log("spinner start", 'd')
                 try:
                     WebDriverWait(driver, 30).until(EC.invisibility_of_element_located((By.CLASS_NAME, "spinner")))
@@ -1247,7 +1245,8 @@ def seasonal_report_operating_ratio_calculator(company_profile_object):
                         round((((report.gross_profit_and_loss - three_month_report.gross_profit_and_loss) / (
                                 report.operating_income - three_month_report.operating_income)) * 100), 0))
                     report.save()
-                    custom_log("report company name: " + str(report.report_title) + ' report date: ' + str(report.season_reported_date), 'd')
+                    custom_log("report company name: " + str(report.report_title) + ' report date: ' + str(
+                        report.season_reported_date), 'd')
                     custom_log("source three_month_report: " + str(three_month_report.season_reported_date), 'd')
                     break
             custom_log('--------')
@@ -1290,4 +1289,32 @@ def string_number_to_int(string: str):
     else:
         string = int(string)
     return string
+
+
+def check_chrome_connection_status(driver_object):
+    for entry in driver_object.get_log('performance'):
+        if str(entry['message']).find('"errorText":"net::ERR_TIMED_OUT"') != -1:
+            errorText = "net::ERR_NO_SUPPORTED_PROXIES"
+            custom_log(errorText, "d")
+            return ConnectionError
+        elif str(entry['message']).find('"errorText":"net::ERR_NO_SUPPORTED_PROXIES"') != -1:
+            errorText = "net::ERR_NO_SUPPORTED_PROXIES"
+            custom_log(errorText, "d")
+            return ConnectionError
+        elif str(entry['message']).find('"errorText":"net::ERR_INTERNET_DISCONNECTED"') != -1:
+            errorText = "net::ERR_INTERNET_DISCONNECTED"
+            custom_log(errorText, "d")
+            return ConnectionError
+        elif str(entry['message']).find('"errorText":"net::ERR_CONNECTION_TIMED_OUT"') != -1:
+            errorText = "net::ERR_CONNECTION_TIMED_OUT"
+            custom_log(errorText, "d")
+            return ConnectionError
+        elif str(entry['message']).find('"errorText":"net::ERR_CONNECTION_RESET"') != -1:
+            errorText = "net::ERR_CONNECTION_RESET"
+            custom_log(errorText, "d")
+            return ConnectionError
+        elif str(entry['message']).find('"errorText":"net::ERR_CONNECTION_REFUSED"') != -1:
+            errorText = "net::ERR_CONNECTION_REFUSED"
+            custom_log(errorText, "d")
+            return ConnectionError
 # ------------ End Helper Functions -------------------

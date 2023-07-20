@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>reports</title>
+</head>
+<style>
+hr {
+    display: block;
+    margin: 2em auto;
+    border-style: inset;
+    border-width: 1px;
+}
+table, th, td {
+  border: 1px solid white;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+</style>
+{% block content %}
+    {% for company in companies_green %}
+    <div style="border-style: solid; border-color: #42006b">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    <td style="width: 15%; text-align: right">{{ forloop.counter }} - {{ company.name }}</td>
+                    <td style="width: 15%; text-align: right">
+                        {% if company.monthly_report_1_date %}
+                            {% if company.monthly_report_comparison_1_4 %}
+                            <span>{{ company.monthly_report_1_date }} | {{ company.monthly_report_comparison_1_4 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_1_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_2_date %}
+                            {% if company.monthly_report_comparison_2_5 %}
+                            <span>{{ company.monthly_report_2_date }} | {{ company.monthly_report_comparison_2_5 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_2_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_3_date %}
+                            {% if company.monthly_report_comparison_3_6 %}
+                            <span>{{ company.monthly_report_3_date }} | {{ company.monthly_report_comparison_3_6 }} %</span>
+                            {% else %}
+                            <span>{{ company.monthly_report_3_date }} | نا مشخص </span>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_spring_date }}</span><br><br>
+                        {% if company.seasonal_report_spring_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_summer_date }}</span><br><br>
+                        {% if company.seasonal_report_summer_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_fall_date }}</span><br><br>
+                        {% if company.seasonal_report_fall_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_winter_date }}</span><br><br>
+                        {% if company.seasonal_report_winter_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    {% endfor %}
+    {% for company in companies_blue %}
+    <div style="border-style: solid; border-color: #42006b">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    <td style="width: 15%; text-align: right">{{ forloop.counter }} - {{ company.name }}</td>
+                    <td style="width: 15%; text-align: right">
+                        {% if company.monthly_report_1_date %}
+                            {% if company.monthly_report_comparison_1_4 %}
+                            <span>{{ company.monthly_report_1_date }} | {{ company.monthly_report_comparison_1_4 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_1_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_2_date %}
+                            {% if company.monthly_report_comparison_2_5 %}
+                            <span>{{ company.monthly_report_2_date }} | {{ company.monthly_report_comparison_2_5 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_2_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_3_date %}
+                            {% if company.monthly_report_comparison_3_6 %}
+                            <span>{{ company.monthly_report_3_date }} | {{ company.monthly_report_comparison_3_6 }} %</span>
+                            {% else %}
+                            <span>{{ company.monthly_report_3_date }} | نا مشخص </span>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_spring_date }}</span><br><br>
+                        {% if company.seasonal_report_spring_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_summer_date }}</span><br><br>
+                        {% if company.seasonal_report_summer_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_fall_date }}</span><br><br>
+                        {% if company.seasonal_report_fall_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_winter_date }}</span><br><br>
+                        {% if company.seasonal_report_winter_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    {% endfor %}
+    {% for company in companies_black %}
+    <div style="border-style: solid; border-color: #42006b">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    <td style="width: 15%; text-align: right">{{ forloop.counter }} - {{ company.name }}</td>
+                    <td style="width: 15%; text-align: right">
+                        {% if company.monthly_report_1_date %}
+                            {% if company.monthly_report_comparison_1_4 %}
+                            <span>{{ company.monthly_report_1_date }} | {{ company.monthly_report_comparison_1_4 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_1_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_2_date %}
+                            {% if company.monthly_report_comparison_2_5 %}
+                            <span>{{ company.monthly_report_2_date }} | {{ company.monthly_report_comparison_2_5 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_2_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_3_date %}
+                            {% if company.monthly_report_comparison_3_6 %}
+                            <span>{{ company.monthly_report_3_date }} | {{ company.monthly_report_comparison_3_6 }} %</span>
+                            {% else %}
+                            <span>{{ company.monthly_report_3_date }} | نا مشخص </span>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_spring_date }}</span><br><br>
+                        {% if company.seasonal_report_spring_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_summer_date }}</span><br><br>
+                        {% if company.seasonal_report_summer_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_fall_date }}</span><br><br>
+                        {% if company.seasonal_report_fall_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_winter_date }}</span><br><br>
+                        {% if company.seasonal_report_winter_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    {% endfor %}
+    {% for company in companies_red %}
+    <div style="border-style: solid; border-color: #42006b">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    <td style="width: 15%; text-align: right">{{ forloop.counter }} - {{ company.name }}</td>
+                    <td style="width: 15%; text-align: right">
+                        {% if company.monthly_report_1_date %}
+                            {% if company.monthly_report_comparison_1_4 %}
+                            <span>{{ company.monthly_report_1_date }} | {{ company.monthly_report_comparison_1_4 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_1_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_2_date %}
+                            {% if company.monthly_report_comparison_2_5 %}
+                            <span>{{ company.monthly_report_2_date }} | {{ company.monthly_report_comparison_2_5 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_2_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_3_date %}
+                            {% if company.monthly_report_comparison_3_6 %}
+                            <span>{{ company.monthly_report_3_date }} | {{ company.monthly_report_comparison_3_6 }} %</span>
+                            {% else %}
+                            <span>{{ company.monthly_report_3_date }} | نا مشخص </span>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_spring_date }}</span><br><br>
+                        {% if company.seasonal_report_spring_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_summer_date }}</span><br><br>
+                        {% if company.seasonal_report_summer_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_fall_date }}</span><br><br>
+                        {% if company.seasonal_report_fall_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_winter_date }}</span><br><br>
+                        {% if company.seasonal_report_winter_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    {% endfor %}
+    {% for company in companies_none %}
+    <div style="border-style: solid; border-color: #42006b">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    <td style="width: 15%; text-align: right">{{ forloop.counter }} - {{ company.badge }}</td>
+                    <td style="width: 15%; text-align: right">
+                        {% if company.monthly_report_1_date %}
+                            {% if company.monthly_report_comparison_1_4 %}
+                            <span>{{ company.monthly_report_1_date }} | {{ company.monthly_report_comparison_1_4 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_1_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_2_date %}
+                            {% if company.monthly_report_comparison_2_5 %}
+                            <span>{{ company.monthly_report_2_date }} | {{ company.monthly_report_comparison_2_5 }} %</span><br><br>
+                            {% else %}
+                            <span>{{ company.monthly_report_2_date }} | نا مشخص </span><br><br>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span><br><br>
+                        {% endif %}
+                        {% if company.monthly_report_3_date %}
+                            {% if company.monthly_report_comparison_3_6 %}
+                            <span>{{ company.monthly_report_3_date }} | {{ company.monthly_report_comparison_3_6 }} %</span>
+                            {% else %}
+                            <span>{{ company.monthly_report_3_date }} | نا مشخص </span>
+                            {% endif %}
+                        {% else %}
+                            <span>نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_spring_date }}</span><br><br>
+                        {% if company.seasonal_report_spring_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_spring_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_spring_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_summer_date }}</span><br><br>
+                        {% if company.seasonal_report_summer_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_summer_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_summer_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_fall_date }}</span><br><br>
+                        {% if company.seasonal_report_fall_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_fall_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_fall_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 15%">
+                        <span>{{ company.seasonal_report_winter_date }}</span><br><br>
+                        {% if company.seasonal_report_winter_color == 'green' %}
+                        <span style="color: green">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'blue' %}
+                        <span style="color: blue">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'black' %}
+                        <span style="color: black">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% elif company.seasonal_report_winter_color == 'red' %}
+                        <span style="color: red">{{ company.seasonal_report_winter_percentage|floatformat }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    {% endfor %}
+
+{% endblock %}
+
+</html>

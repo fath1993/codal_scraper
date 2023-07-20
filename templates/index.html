@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>{{ page_title }}</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'index/assets/favicon.ico' %}"/>
+    <!-- Font Awesome icons (free version)-->
+    <script src="{% static 'index/js/font-awsome-all.js' %}"></script>
+    <!-- Simple line icons-->
+    <link href="{% static 'index/css/simple-line-icons.min.css' %}"
+          rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'index/css/styles.css' %}" rel="stylesheet"/>
+</head>
+<body id="page-top">
+
+<!-- Header-->
+<header class="masthead d-flex align-items-center">
+    <div class="container px-4 px-lg-5 text-center">
+        <h1 class="mb-1">ربات بورسی کدال</h1>
+        <h3 class="mb-5"><em>اسکرپ با سلری و سلنیوم</em></h3>
+        <a class="btn btn-primary btn-xl" href="{% url 'website:report-spring' %}">صفحه گزارشات</a>
+    </div>
+</header>
+
+<!-- Bootstrap core JS-->
+<script src="{% static 'index/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Core theme JS-->
+<script src="{% static 'index/js/scripts.js' %}"></script>
+</body>
+</html>

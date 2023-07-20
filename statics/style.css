@@ -1,0 +1,232 @@
+html{
+    height: 100%;
+    overflow: hidden;
+}
+@font-face {
+    font-family: Vazirmatn;
+    src: url("./Vazirmatn-Regular.ttf");
+}
+.line{
+    position: relative;
+    top:-75px;
+    margin: 5px 0;
+    height: 2px;
+    background: repeating-linear-gradient(to right, black 0,black 30px, transparent 30px, transparent 40px);
+}
+.data{
+    margin-top: 180px;
+}
+
+li{
+    list-style-type: none;
+    font-family:Vazirmatn;
+}
+#title1{
+    position: absolute;
+    right: 20px;
+    top:10px;
+    direction: rtl;
+}
+.dates, .nums{
+    display: table-row;
+    position: relative;
+
+    
+}
+.dates div{
+    display: table-cell;
+    text-align: center;
+    border: 0px solid black;
+    padding: 1em 1em 0.6em 5em ;
+    position: relative;
+    left: 150px;
+    top:-137px;
+}
+.nums div{
+    display: table-cell;
+    text-align: center;
+    padding: 0.4em 1em 1em 5em;
+    border: 0px solid red;
+    color: black; /*change this later if you want*/
+    position: relative;
+    left:150px;
+    top:-130px;
+}
+.percents{
+    position: absolute;
+    right:30px;
+    top:58px;
+    margin-right: 80px;
+
+}
+.percents div{
+    margin-bottom: 20px;
+    max-width: 150px;
+}
+#title2{
+    position: absolute;
+    right: 20px;
+    direction: rtl;
+    top:250px;
+}
+.percents2{
+    position: absolute;
+    right:30px;
+    top:308px;
+    margin-right: 80px;
+}
+.percents2 div{
+    margin-bottom: 20px;
+}
+#nums2{
+    position:relative;
+    left:-20px;
+}
+#nums2 :nth-child(2){
+    color:green
+}
+#nums2 :nth-child(3){
+    color:green
+}
+
+#title3{
+    position: absolute;
+    right: 20px;
+    top:470px;
+    direction: rtl;
+}
+#dates3{
+    position: relative;
+    top:-15px;
+}
+#nums3{
+    position: relative;
+    top:-15px;
+    left: -10px;
+}
+.percents3{
+    position:absolute;
+    right:120px;
+    top:510px;
+}
+.percents3 div{
+    margin-bottom: 20px;
+}
+/* mobile */
+@media screen and (max-width: 1200px)  {
+    html{
+        height: 100%;
+        overflow: hidden;  
+    }
+    .line{
+        margin: 5px 0;
+        height: 2px;
+        background: repeating-linear-gradient(to right, black 0,black 30px, transparent 30px, transparent 40px);
+        position: relative;
+        top:50px
+    }
+    .data{
+        margin-top: 100px;
+    }
+    .percents{
+        position: absolute;
+        right: -75px;
+        width: 150px;
+    }
+    .dates, .nums{
+        display: table-row;
+        position: relative;
+        left: -50px;
+        top:-50px;
+        table-layout: auto;
+        width: 100px;
+
+    }
+    .dates div{
+        display: table-cell;
+        text-align: center;
+        border: 0px solid black;
+        padding: 0.5em 1em 0.2em 0.5em ;
+    }
+    .nums div{
+        display: table-cell;
+        text-align: center;
+        padding: 0em 1em 0em 0em;
+        border: 0px solid black;
+        color: black; /*change this later if you want*/
+    }
+    .nums :nth-child(3),.dates :nth-child(3), .nums :nth-child(4),.dates :nth-child(4){
+        position: relative;
+        top:63px;
+        left:-115px;
+        
+    }
+        .nums :nth-child(1),.dates :nth-child(1), .nums :nth-child(2),.dates :nth-child(2){
+        position: relative;
+        left:80px;
+    }
+    #line2{
+        position: relative;
+        top:-270px;
+    }
+    #title2{
+        position: absolute;
+        top:200px;
+    }
+    .percents2{
+        position: absolute;
+        right: -50px;
+        width: 150px;
+        top:250px;
+    }
+    #dates2{
+        position: relative;
+        top: -90px;
+    }
+    #nums2{
+        left: -320px;
+        top: -220px;
+    }
+    #title3{
+        position: absolute;
+        top:450px;  
+    }
+    .percents3{
+        position: absolute;
+        right: 30px;
+        width: 150px;
+        top:500px;
+    }
+    #dates3{
+        position: relative;
+        top: -200px;
+    }
+    #nums3{
+        position: relative;
+        left: -320px;
+        top: -330px;
+    }
+
+}
+/* media screen 1980 x 1080 */
+@media screen and (min-width:1600px) {
+    .dates div{
+        display: table-cell;
+        text-align: center;
+        border: 0px solid black;
+        padding: 1em 1em 0.6em 5em ;
+        position: relative;
+        left: 550px;
+        top:-137px;
+    }
+    .nums div{
+        display: table-cell;
+        text-align: center;
+        padding: 0.4em 1em 1em 5em;
+        border: 0px solid red;
+        color: black; /*change this later if you want*/
+        position: relative;
+        left:550px;
+        top:-130px;
+    }
+}

@@ -4,7 +4,7 @@ import time
 from codal_scraper.settings import CHROME_DRIVER_PATH
 from custom_logs.models import custom_log
 from proxies.models import get_proxy, check_proxy_availability
-from codal.models import Company, MonthlyReport, SeasonalReport, ConfigSetting
+from codal.models import Company, MonthlyReport, SeasonalReport, ConfigSetting, CODAL_SCRAPER_SETTINGS
 from codal.utils import date_extractor, year_extractor, word_simplifier, codal_title_cleanup, date_range_generator
 
 from selenium import webdriver
@@ -24,12 +24,8 @@ PROXY = str(get_proxy()[0] + ':' + get_proxy()[1])
 
 # ------------ Start Scraper functions -------------------
 def get_time_sleep():
-    settings = ConfigSetting.objects.all().latest('id')
-    if not settings:
-        time_sleep = 30
-    else:
-        time_sleep = settings.sleep_time
-        custom_log("sleep time: " + str(time_sleep), "d")
+    time_sleep = CODAL_SCRAPER_SETTINGS.sleep_time
+    custom_log("sleep time: " + str(time_sleep), "d")
     return int(time_sleep)
 
 
@@ -39,8 +35,7 @@ def get_codal_data(url):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    settings = ConfigSetting.objects.all().latest('id')
-    if settings.is_proxy_on:
+    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -339,8 +334,7 @@ def get_monthly_report_number(report_object):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    settings = ConfigSetting.objects.all().latest('id')
-    if settings.is_proxy_on:
+    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -512,8 +506,7 @@ def get_seasonal_report_number(report_object):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    settings = ConfigSetting.objects.all().latest('id')
-    if settings.is_proxy_on:
+    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -751,8 +744,7 @@ def check_if_last_page(url):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    settings = ConfigSetting.objects.all().latest('id')
-    if settings.is_proxy_on:
+    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)

@@ -107,18 +107,22 @@ class CompanyProfileAdmin(admin.ModelAdmin):
         'seasonal_report_spring_date_order',
         'seasonal_report_spring_percentage',
         'seasonal_report_spring_color',
+        'seasonal_report_spring_operating_ratio',
         'seasonal_report_summer_date',
         'seasonal_report_summer_date_order',
         'seasonal_report_summer_percentage',
         'seasonal_report_summer_color',
+        'seasonal_report_summer_operating_ratio',
         'seasonal_report_fall_date',
         'seasonal_report_fall_date_order',
         'seasonal_report_fall_percentage',
         'seasonal_report_fall_color',
+        'seasonal_report_fall_operating_ratio',
         'seasonal_report_winter_date',
         'seasonal_report_winter_date_order',
         'seasonal_report_winter_percentage',
         'seasonal_report_winter_color',
+        'seasonal_report_winter_operating_ratio',
     )
 
     @admin.display(description='تاریخ ایجاد', empty_value='???')

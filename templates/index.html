@@ -22,10 +22,23 @@
 
 <!-- Header-->
 <header class="masthead d-flex align-items-center">
-    <div class="container px-4 px-lg-5 text-center">
+    <div class="container px-4 px-lg-5 text-center" dir="rtl">
         <h1 class="mb-1">ربات بورسی کدال</h1>
         <h3 class="mb-5"><em>اسکرپ با سلری و سلنیوم</em></h3>
-        <a class="btn btn-primary btn-xl" href="{% url 'website:report-spring' %}">صفحه گزارشات</a>
+        <div class="mb-5" style="height: 120px">
+        <a class="col-sm-2 btn btn-primary btn-xl align-middle" style="height: 100%" href="{% url 'website:report-view' report_tag='all' %}">بر اساس اخرین موارد دریافتی</a>
+        <a class="col-sm-2 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='1' %}">بر اساس اخرین ماه گزارشات ماهانه</a>
+        <a class="col-sm-2 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='2' %}">بر اساس ماه یکی مانده به آخر گزارشات ماهانه</a>
+        <a class="col-sm-2 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='3' %}">بر اساس ماه دوتا مانده به آخر گزارشات ماهانه</a>
+        </div>
+        <div class="mb-2" style="height: 80px">
+        <a class="col-sm-4 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='spring' %}">بر اساس فصلی بهار</a>
+        <a class="col-sm-4 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='summer' %}">بر اساس فصلی تابستان</a>
+        </div>
+        <div class="mb-2" style="height: 80px">
+        <a class="col-sm-4 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='fall' %}">بر اساس فصلی پاییز</a>
+        <a class="col-sm-4 btn btn-primary btn-xl align-middle" style="height: 100%"  href="{% url 'website:report-view' report_tag='winter' %}">بر اساس فصلی زمستان</a>
+        </div>
     </div>
 </header>
 

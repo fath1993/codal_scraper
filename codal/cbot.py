@@ -4,7 +4,7 @@ import time
 from codal_scraper.settings import CHROME_DRIVER_PATH
 from custom_logs.models import custom_log
 from proxies.models import get_proxy, check_proxy_availability
-from codal.models import Company, MonthlyReport, SeasonalReport, ConfigSetting, CODAL_SCRAPER_SETTINGS
+from codal.models import Company, MonthlyReport, SeasonalReport, ConfigSetting, config_settings
 from codal.utils import date_extractor, year_extractor, word_simplifier, codal_title_cleanup, date_range_generator
 
 from selenium import webdriver
@@ -24,7 +24,7 @@ PROXY = str(get_proxy()[0] + ':' + get_proxy()[1])
 
 # ------------ Start Scraper functions -------------------
 def get_time_sleep():
-    time_sleep = CODAL_SCRAPER_SETTINGS.sleep_time
+    time_sleep = config_settings().sleep_time
     custom_log("sleep time: " + str(time_sleep), "d")
     return int(time_sleep)
 
@@ -35,7 +35,7 @@ def get_codal_data(url):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+    if config_settings().is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -334,7 +334,7 @@ def get_monthly_report_number(report_object):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+    if config_settings().is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -506,7 +506,7 @@ def get_seasonal_report_number(report_object):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+    if config_settings().is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -744,7 +744,7 @@ def check_if_last_page(url):
     options.add_argument("--window-size=1920,1200")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+    if config_settings().is_proxy_on:
         global PROXY
         options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH, options=options, desired_capabilities=d)
@@ -1166,49 +1166,61 @@ def seasonal_report_calculator(company_profile_object):
     seasonal_report_spring_percentage = spring_report.reported_percentage
     seasonal_report_spring_color = spring_report.reported_percentage_color
     seasonal_report_spring_date = spring_report.season_reported_date
+    seasonal_report_spring_operating_ratio = spring_report.operating_ratio
     custom_log("seasonal report spring date: " + str(seasonal_report_spring_date), "d")
     custom_log("seasonal report spring percentage: " + str(seasonal_report_spring_percentage), "d")
     custom_log("seasonal report spring color: " + str(seasonal_report_spring_color), "d")
+    custom_log("seasonal report spring operating ratio: " + str(seasonal_report_spring_operating_ratio), "d")
 
     # summer
     seasonal_report_summer_percentage = summer_report.reported_percentage
     seasonal_report_summer_color = summer_report.reported_percentage_color
     seasonal_report_summer_date = summer_report.season_reported_date
+    seasonal_report_summer_operating_ratio = summer_report.operating_ratio
     custom_log("seasonal report summer date: " + str(seasonal_report_summer_date), "d")
     custom_log("seasonal report summer percentage: " + str(seasonal_report_summer_percentage), "d")
     custom_log("seasonal report summer color: " + str(seasonal_report_summer_color), "d")
+    custom_log("seasonal report summer operating ratio: " + str(seasonal_report_summer_operating_ratio), "d")
 
     # fall
     seasonal_report_fall_percentage = fall_report.reported_percentage
     seasonal_report_fall_color = fall_report.reported_percentage_color
     seasonal_report_fall_date = fall_report.season_reported_date
+    seasonal_report_fall_operating_ratio = fall_report.operating_ratio
     custom_log("seasonal report fall date: " + str(seasonal_report_fall_date), "d")
     custom_log("seasonal report fall percentage: " + str(seasonal_report_fall_percentage), "d")
     custom_log("seasonal report fall color: " + str(seasonal_report_fall_color), "d")
+    custom_log("seasonal report fall operating ratio: " + str(seasonal_report_fall_operating_ratio), "d")
 
     # winter
     seasonal_report_winter_percentage = winter_report.reported_percentage
     seasonal_report_winter_color = winter_report.reported_percentage_color
     seasonal_report_winter_date = winter_report.season_reported_date
+    seasonal_report_winter_operating_ratio = winter_report.operating_ratio
     custom_log("seasonal report winter date: " + str(seasonal_report_winter_date), "d")
     custom_log("seasonal report winter percentage: " + str(seasonal_report_winter_percentage), "d")
     custom_log("seasonal report winter color: " + str(seasonal_report_winter_color), "d")
+    custom_log("seasonal report winter operating ratio: " + str(seasonal_report_winter_operating_ratio), "d")
 
     company_profile_object.seasonal_report_spring_percentage = seasonal_report_spring_percentage
     company_profile_object.seasonal_report_spring_color = seasonal_report_spring_color
     company_profile_object.seasonal_report_spring_date = seasonal_report_spring_date
+    company_profile_object.seasonal_report_spring_operating_ratio = seasonal_report_spring_operating_ratio
 
     company_profile_object.seasonal_report_summer_percentage = seasonal_report_summer_percentage
     company_profile_object.seasonal_report_summer_color = seasonal_report_summer_color
     company_profile_object.seasonal_report_summer_date = seasonal_report_summer_date
+    company_profile_object.seasonal_report_summer_operating_ratio = seasonal_report_summer_operating_ratio
 
     company_profile_object.seasonal_report_fall_percentage = seasonal_report_fall_percentage
     company_profile_object.seasonal_report_fall_color = seasonal_report_fall_color
     company_profile_object.seasonal_report_fall_date = seasonal_report_fall_date
+    company_profile_object.seasonal_report_fall_operating_ratio = seasonal_report_fall_operating_ratio
 
     company_profile_object.seasonal_report_winter_percentage = seasonal_report_winter_percentage
     company_profile_object.seasonal_report_winter_color = seasonal_report_winter_color
     company_profile_object.seasonal_report_winter_date = seasonal_report_winter_date
+    company_profile_object.seasonal_report_winter_operating_ratio = seasonal_report_winter_operating_ratio
 
     if seasonal_report_spring_percentage is not None or seasonal_report_summer_percentage is not None \
             or seasonal_report_fall_percentage is not None or seasonal_report_winter_percentage is not None:

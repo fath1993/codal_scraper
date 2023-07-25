@@ -9,7 +9,7 @@ from codal.cbot import get_codal_data, codal_first_page, get_time_sleep, check_i
     codal_seasonal_report_page, monthly_report_calculator, seasonal_report_calculator, \
     seasonal_report_operating_ratio_calculator, get_monthly_report_number, get_seasonal_report_number
 from codal.models import Company, CompanyLink, MonthlyReport, SeasonalReport, CompanyProfile, ConfigSetting, \
-    CODAL_SCRAPER_SETTINGS
+    config_settings
 
 
 def codal_scraper():
@@ -214,7 +214,7 @@ def check_and_update_data_with_first_page():
             break
         except Exception as e:
             custom_log("problem has happened during the event : " + str(e), 'p')
-            if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+            if config_settings().is_proxy_on:
                 while True:
                     custom_log("checking proxy...", 'p')
                     if check_proxy_availability(get_proxy()):
@@ -223,12 +223,12 @@ def check_and_update_data_with_first_page():
                         custom_log("proxies are not connectable. pls upgrade theme", 'p')
                         custom_log("we check proxy list again after 5 minute", 'p')
                         time.sleep(300)
-                    if not CODAL_SCRAPER_SETTINGS.is_proxy_on:
+                    if not config_settings().is_proxy_on:
                         break
 
 
 def check_proxy_is_available():
-    if CODAL_SCRAPER_SETTINGS.is_proxy_on:
+    if config_settings().is_proxy_on:
         while True:
             custom_log("checking proxy...", 'p')
             if check_proxy_availability(get_proxy()):
@@ -237,7 +237,7 @@ def check_proxy_is_available():
                 custom_log("proxies are not connectable. pls upgrade theme", 'p')
                 custom_log("we check proxy list again after 5 minute", 'p')
                 time.sleep(300)
-            if not CODAL_SCRAPER_SETTINGS.is_proxy_on:
+            if not config_settings().is_proxy_on:
                 break
 
 

@@ -61,6 +61,7 @@ class CompanyProfile(models.Model):
                                                           verbose_name="درصد گزارش فصلی بهار")
     seasonal_report_spring_color = models.CharField(max_length=255, null=True, blank=True, editable=False,
                                                     verbose_name="رنگ گزارش فصلی بهار")
+    seasonal_report_spring_operating_ratio = models.IntegerField(null=True, blank=True, editable=False, verbose_name="عدد عملیاتی فصل بهار")
     seasonal_report_summer_date = jmodel.jDateField(null=True, blank=True, editable=False,
                                                     verbose_name="تاریخ گزارش فصلی تابستان")
     seasonal_report_summer_date_order = models.SmallIntegerField(null=True, blank=True, editable=False, default=2)
@@ -68,6 +69,8 @@ class CompanyProfile(models.Model):
                                                           verbose_name="درصد گزارش فصلی تابستان")
     seasonal_report_summer_color = models.CharField(max_length=255, null=True, blank=True, editable=False,
                                                     verbose_name="رنگ گزارش فصلی تابستان")
+    seasonal_report_summer_operating_ratio = models.IntegerField(null=True, blank=True, editable=False,
+                                                                 verbose_name="عدد عملیاتی فصل تابستان")
     seasonal_report_fall_date = jmodel.jDateField(null=True, blank=True, editable=False,
                                                   verbose_name="تاریخ گزارش فصلی پاییز")
     seasonal_report_fall_date_order = models.SmallIntegerField(null=True, blank=True, editable=False, default=3)
@@ -75,6 +78,8 @@ class CompanyProfile(models.Model):
                                                         verbose_name="درصد گزارش فصلی پاییز")
     seasonal_report_fall_color = models.CharField(max_length=255, null=True, blank=True, editable=False,
                                                   verbose_name="رنگ گزارش فصلی پاییز")
+    seasonal_report_fall_operating_ratio = models.IntegerField(null=True, blank=True, editable=False,
+                                                                 verbose_name="عدد عملیاتی فصل پاییز")
     seasonal_report_winter_date = jmodel.jDateField(null=True, blank=True, editable=False,
                                                     verbose_name="تاریخ گزارش فصلی زمستان")
     seasonal_report_winter_date_order = models.SmallIntegerField(null=True, blank=True, editable=False, default=4)
@@ -82,6 +87,8 @@ class CompanyProfile(models.Model):
                                                           verbose_name="درصد گزارش فصلی زمستان")
     seasonal_report_winter_color = models.CharField(max_length=255, null=True, blank=True, editable=False,
                                                     verbose_name="رنگ گزارش فصلی زمستان")
+    seasonal_report_winter_operating_ratio = models.IntegerField(null=True, blank=True, editable=False,
+                                                                 verbose_name="عدد عملیاتی فصل زمستان")
 
     class Meta:
         verbose_name = "پروفایل شرکت"
@@ -177,6 +184,3 @@ def config_settings():
         )
         codal_scraper_settings.save()
     return codal_scraper_settings
-
-
-CODAL_SCRAPER_SETTINGS = config_settings()
